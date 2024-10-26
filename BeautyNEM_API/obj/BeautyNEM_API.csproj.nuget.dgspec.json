@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\CAPSTONE\\BeautyNEM_API\\BeautyNEM_API.csproj": {}
+    "D:\\MyProject\\BeautyNEM\\BeautyNEM_API\\BeautyNEM_API.csproj": {}
   },
   "projects": {
-    "C:\\CAPSTONE\\BeautyNEM_API\\BeautyNEM_API.csproj": {
+    "D:\\MyProject\\BeautyNEM\\BeautyNEM_API\\BeautyNEM_API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\CAPSTONE\\BeautyNEM_API\\BeautyNEM_API.csproj",
+        "projectUniqueName": "D:\\MyProject\\BeautyNEM\\BeautyNEM_API\\BeautyNEM_API.csproj",
         "projectName": "BeautyNEM_API",
-        "projectPath": "C:\\CAPSTONE\\BeautyNEM_API\\BeautyNEM_API.csproj",
-        "packagesPath": "C:\\Users\\ThanhPC\\.nuget\\packages\\",
-        "outputPath": "C:\\CAPSTONE\\BeautyNEM_API\\obj\\",
+        "projectPath": "D:\\MyProject\\BeautyNEM\\BeautyNEM_API\\BeautyNEM_API.csproj",
+        "packagesPath": "C:\\Users\\FPTSHOP\\.nuget\\packages\\",
+        "outputPath": "D:\\MyProject\\BeautyNEM\\BeautyNEM_API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ThanhPC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\FPTSHOP\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -40,6 +40,42 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
+            "CloudinaryDotNet": {
+              "target": "Package",
+              "version": "[1.26.2, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[6.0.10, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.10, )"
+            },
+            "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
+              "target": "Package",
+              "version": "[6.0.10, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.10, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[6.0.10, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.10, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"
@@ -51,7 +87,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -63,7 +100,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
         }
       }
     }

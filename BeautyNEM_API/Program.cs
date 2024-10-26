@@ -4,25 +4,25 @@ using BeautyNEM_API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
+IdentityModelEventSource.ShowPII = true;
 // Add services to the container.
-
 builder.Services.AddDbContext<BeautyNEMContext>(options =>
-                  options.UseSqlServer(configuration.GetConnectionString("BeautyNEMContextConnection")));
+    options.UseSqlServer(configuration.GetConnectionString("BeautyNEMContextConnection")));
 
 // Add Authentication & Authorization
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
 }).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -33,12 +33,12 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = configuration["Jwt:Issuer"],
         ValidAudience = configuration["Jwt:Issuer"],
-        ClockSkew = TimeSpan.Zero,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
+        ClockSkew = TimeSpan.Zero // Thay đổi này nếu cần
     };
 });
 
-//Add DI
+// Add DI
 builder.Services.AddTransient<IJwtService, JwtService>();
 builder.Services.AddTransient<IAdminAccountService, AdminAccountService>();
 builder.Services.AddTransient<IBeauticianAccountService, BeauticianAccountService>();
@@ -60,40 +60,68 @@ builder.Services.AddTransient<IFavoriteService, FavoriteService>();
 builder.Services.AddTransient<IArrangeService, ArrangeService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IMoneyService, MoneySerivce>();
+// (Thêm các dịch vụ còn lại ở đây)
+
 builder.Services.AddCors();
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Swagger configuration
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "BeautyNEM API", Version = "v1" });
+
+    // Define security scheme
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+
+    // Add security requirement
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BeautyNEM API v1"));
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.UseCors(options => options
-                .WithOrigins("https://localhost:44319", "http://localhost:3000")
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials());
+    .WithOrigins("https://localhost:44319", "http://localhost:3000")
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials());
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseExceptionHandler(exceptionHandlerApp =>
 {
     exceptionHandlerApp.Run(async context =>
     {
         context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-
-        // using static System.Net.Mime.MediaTypeNames;
         context.Response.ContentType = Text.Plain;
         var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
         await context.Response.WriteAsync(exceptionHandlerPathFeature?.Error.Message);
@@ -101,5 +129,4 @@ app.UseExceptionHandler(exceptionHandlerApp =>
 });
 
 app.MapControllers();
-
 app.Run();

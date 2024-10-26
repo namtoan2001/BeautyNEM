@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\BeautyNEM_API.props" />
+</Project>
